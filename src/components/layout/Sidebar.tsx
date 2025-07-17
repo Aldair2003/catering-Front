@@ -37,7 +37,7 @@ const Sidebar: React.FC = () => {
   const navigate = useNavigate();
   const { isOpen, closeSidebar, isMobile } = useSidebar();
 
-  const isAdminRoute = location.pathname.startsWith('/admin');
+  const isAdminRoute = location.pathname.startsWith('/admin') || location.pathname === '/dashboard';
 
   // Navegación simple para clientes
   const customerNavItems: NavItem[] = [
