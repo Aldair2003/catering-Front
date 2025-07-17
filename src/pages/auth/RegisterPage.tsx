@@ -65,7 +65,7 @@ const RegisterPage: React.FC = () => {
             Crear Cuenta
           </h2>
           <p className="mt-2 text-gray-600">
-            Únete a CateringPro
+            Únete a PortoCatering
           </p>
         </div>
         

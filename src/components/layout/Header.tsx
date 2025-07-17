@@ -46,7 +46,6 @@ const Header: React.FC = () => {
   // Configuración de navegación
   const navigation = [
     { name: 'Inicio', path: '/', icon: HomeIcon, iconSolid: HomeIconSolid },
-    { name: 'Menú', path: '/menu', icon: CubeIcon, iconSolid: CubeIconSolid },
     ...(isAuthenticated ? [
       { name: 'Mis Pedidos', path: '/orders', icon: ClipboardDocumentListIcon, iconSolid: ClipboardDocumentListIconSolid },
       { name: 'Carrito', path: '/cart', icon: ShoppingCartIcon, iconSolid: ShoppingCartIconSolid }
@@ -78,11 +77,15 @@ const Header: React.FC = () => {
                 whileHover={{ rotate: 5, scale: 1.1 }}
                 transition={{ duration: 0.2 }}
               >
-                <span className="text-2xl">🍽️</span>
+                <img 
+                  src="/logo/logoCatemini.png" 
+                  alt="PortoCatering Logo" 
+                  className="h-10 w-10 object-contain"
+                />
               </motion.div>
               <div>
                 <h1 className="text-xl font-bold bg-gradient-to-r from-orange-600 to-orange-800 bg-clip-text text-transparent">
-                  CateringPro
+                  PortoCatering
                 </h1>
                 <p className="text-xs text-orange-600">Servicios de Catering</p>
               </div>
@@ -101,14 +104,6 @@ const Header: React.FC = () => {
                   }`}
                 >
                   Inicio
-                </Link>
-                <Link 
-                  to="/menu" 
-                  className={`hover:text-orange-600 transition-colors ${
-                    location.pathname === '/menu' ? 'text-orange-600 font-semibold' : 'text-gray-700'
-                  }`}
-                >
-                  Menú
                 </Link>
                 {isAuthenticated && (
                   <Link 

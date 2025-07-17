@@ -189,13 +189,13 @@ const HomePage: React.FC = () => {
               >
                 <img 
                   src="/logo/logoCatemini.png" 
-                  alt="CateringPro Logo" 
+                  alt="PortoCatering Logo" 
                   className="h-20 w-20 object-contain"
                 />
               </motion.div>
               <div className="text-left">
                 <h1 className="text-5xl md:text-6xl font-bold text-white mb-2">
-                  CateringPro
+                  PortoCatering
                 </h1>
                 <p className="text-xl text-orange-100">Experiencias Culinarias Únicas</p>
               </div>

@@ -52,7 +52,7 @@ const LoginPage: React.FC = () => {
             Iniciar Sesión
           </h2>
           <p className="mt-2 text-gray-600">
-            Accede a tu cuenta de CateringPro
+            Accede a tu cuenta de PortoCatering
           </p>
         </div>
         
