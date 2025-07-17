@@ -7,6 +7,7 @@ import { AuthProvider } from './contexts/AuthContext';
 
 // Layout Components
 import Layout from './components/layout/Layout';
+import DashboardLayout from './components/layout/DashboardLayout';
 
 // Public Pages
 import HomePage from './pages/public/HomePage';
@@ -27,13 +28,15 @@ import DeliveryPage from './pages/admin/DeliveryPage';
 import MetricsPage from './pages/admin/MetricsPage';
 
 /**
- * Componente principal de la aplicación
- * Configura el sistema de rutas para el proyecto de Catering Automatizado
+ * Componente principal de la aplicación PortoCatering
+ * Configura el sistema de rutas con layouts apropiados
  * 
  * Estructura de rutas:
- * - Públicas: Home, Login, Register
- * - Cliente: Menú, Carrito, Pedidos, Perfil
- * - Admin: Dashboard, Clientes, Inventario, Entregas, Métricas
+ * - Públicas: Home (con Layout normal)
+ * - Auth: Login, Register (sin Layout)
+ * - Dashboard: Admin dashboard con sidebar
+ * - Cliente: Páginas con DashboardLayout
+ * - Admin: Páginas administrativas con DashboardLayout
  */
 function App() {
   return (
@@ -48,64 +51,64 @@ function App() {
               </Layout>
             } />
             
-            {/* Rutas de Autenticación */}
+            {/* Rutas de Autenticación (sin layout) */}
             <Route path="/auth/login" element={<LoginPage />} />
             <Route path="/auth/register" element={<RegisterPage />} />
             
-            {/* Dashboard - redirige al menú por defecto */}
+            {/* Dashboard Principal */}
             <Route path="/dashboard" element={
-              <Layout>
-                <MenuPage />
-              </Layout>
+              <DashboardLayout>
+                <AdminDashboard />
+              </DashboardLayout>
             } />
             
-            {/* Rutas de Cliente */}
+            {/* Rutas de Cliente con Dashboard Layout */}
             <Route path="/menu" element={
-              <Layout>
+              <DashboardLayout>
                 <MenuPage />
-              </Layout>
+              </DashboardLayout>
             } />
             <Route path="/cart" element={
-              <Layout>
+              <DashboardLayout>
                 <CartPage />
-              </Layout>
+              </DashboardLayout>
             } />
             <Route path="/orders" element={
-              <Layout>
+              <DashboardLayout>
                 <OrdersPage />
-              </Layout>
+              </DashboardLayout>
             } />
             <Route path="/profile" element={
-              <Layout>
+              <DashboardLayout>
                 <ProfilePage />
-              </Layout>
+              </DashboardLayout>
             } />
             
-            {/* Rutas de Administración */}
+            {/* Rutas de Administración con Dashboard Layout */}
             <Route path="/admin" element={
-              <Layout>
+              <DashboardLayout>
                 <AdminDashboard />
-              </Layout>
+              </DashboardLayout>
             } />
             <Route path="/admin/clients" element={
-              <Layout>
+              <DashboardLayout>
                 <ClientManagement />
-              </Layout>
+              </DashboardLayout>
             } />
             <Route path="/admin/inventory" element={
-              <Layout>
+              <DashboardLayout>
                 <InventoryPage />
-              </Layout>
+              </DashboardLayout>
             } />
             <Route path="/admin/delivery" element={
-              <Layout>
+              <DashboardLayout>
                 <DeliveryPage />
-              </Layout>
+              </DashboardLayout>
             } />
             <Route path="/admin/metrics" element={
-              <Layout>
+              <DashboardLayout>
                 <MetricsPage />
-              </Layout>
+              </DashboardLayout>
             } />
           </Routes>
         </div>

@@ -1,5 +1,4 @@
 import React from 'react';
-import ChatSidebar from '../../components/chatbot/ChatSidebar';
 
 /**
  * Dashboard Principal de Administración
@@ -55,18 +54,18 @@ const AdminDashboard: React.FC = () => {
               <p className="text-sm font-medium text-gray-600">Pedidos Hoy</p>
               <p className="text-3xl font-bold text-gray-800">{metrics.todayOrders}</p>
             </div>
-            <div className="text-4xl text-green-500">📅</div>
+            <div className="text-4xl text-green-500">🎯</div>
           </div>
         </div>
 
         {/* Ingresos Totales */}
-        <div className="bg-white p-6 rounded-lg shadow-md border-l-4 border-yellow-500">
+        <div className="bg-white p-6 rounded-lg shadow-md border-l-4 border-orange-500">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Ingresos Totales</p>
-              <p className="text-3xl font-bold text-gray-800">${metrics.totalRevenue}</p>
+              <p className="text-3xl font-bold text-gray-800">${metrics.totalRevenue.toLocaleString()}</p>
             </div>
-            <div className="text-4xl text-yellow-500">💰</div>
+            <div className="text-4xl text-orange-500">💰</div>
           </div>
         </div>
 
@@ -82,79 +81,63 @@ const AdminDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Sección de accesos rápidos */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Gráficos y estadísticas adicionales */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
-        {/* Gestión de Clientes */}
-        <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-          <div className="text-center">
-            <div className="text-5xl mb-4">👥</div>
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">
-              Gestión de Clientes
-            </h3>
-            <p className="text-gray-600 mb-4">
-              Administra clientes, edita información y ve historial de pedidos
-            </p>
-            <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
-              Ir a Clientes
-            </button>
+        {/* Plato más popular */}
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">🏆 Plato Más Popular</h3>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xl font-bold text-gray-800">{metrics.popularDish}</p>
+              <p className="text-sm text-gray-600">45 pedidos este mes</p>
+            </div>
+            <div className="text-4xl">🍗</div>
           </div>
         </div>
 
-        {/* Inventario */}
-        <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-          <div className="text-center">
-            <div className="text-5xl mb-4">📦</div>
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">
-              Inventario
-            </h3>
-            <p className="text-gray-600 mb-4">
-              Control básico de insumos y stock disponible
-            </p>
-            <button className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors">
-              Ver Inventario
-            </button>
-          </div>
-        </div>
-
-        {/* Planificación de Entregas */}
-        <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-          <div className="text-center">
-            <div className="text-5xl mb-4">🚚</div>
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">
-              Entregas
-            </h3>
-            <p className="text-gray-600 mb-4">
-              Planifica y gestiona las entregas programadas
-            </p>
-            <button className="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 transition-colors">
-              Planificar
-            </button>
+        {/* Actividad reciente */}
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">📈 Tendencias</h3>
+          <div className="space-y-3">
+            <div className="flex justify-between">
+              <span className="text-gray-600">Ventas este mes</span>
+              <span className="text-green-600 font-semibold">+15%</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">Nuevos clientes</span>
+              <span className="text-green-600 font-semibold">+8%</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">Satisfacción</span>
+              <span className="text-green-600 font-semibold">4.8/5.0</span>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Información adicional */}
+      {/* Acciones rápidas */}
       <div className="bg-white p-6 rounded-lg shadow-md">
-        <h3 className="text-xl font-semibold text-gray-800 mb-4">
-          📈 Resumen del Día
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <p className="text-gray-600">
-              <span className="font-semibold">Plato más pedido:</span> {metrics.popularDish}
-            </p>
-          </div>
-          <div>
-            <p className="text-gray-600">
-              <span className="font-semibold">Estado del sistema:</span> 
-              <span className="text-green-600 ml-2">✅ Operativo</span>
-            </p>
-          </div>
+        <h3 className="text-lg font-semibold text-gray-800 mb-4">⚡ Acciones Rápidas</h3>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <button className="bg-blue-500 text-white p-4 rounded-lg hover:bg-blue-600 transition-colors">
+            <div className="text-2xl mb-2">📊</div>
+            <div className="text-sm font-medium">Ver Métricas</div>
+          </button>
+          <button className="bg-green-500 text-white p-4 rounded-lg hover:bg-green-600 transition-colors">
+            <div className="text-2xl mb-2">📦</div>
+            <div className="text-sm font-medium">Gestionar Inventario</div>
+          </button>
+          <button className="bg-orange-500 text-white p-4 rounded-lg hover:bg-orange-600 transition-colors">
+            <div className="text-2xl mb-2">🚚</div>
+            <div className="text-sm font-medium">Ver Entregas</div>
+          </button>
+          <button className="bg-purple-500 text-white p-4 rounded-lg hover:bg-purple-600 transition-colors">
+            <div className="text-2xl mb-2">👥</div>
+            <div className="text-sm font-medium">Gestionar Clientes</div>
+          </button>
         </div>
       </div>
-      {/* ChatBot sidebar solo en dashboard */}
-      <ChatSidebar />
     </div>
   );
 };
