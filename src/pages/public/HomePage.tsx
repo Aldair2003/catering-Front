@@ -223,8 +223,16 @@ const HomePage: React.FC = () => {
               whileTap={{ scale: 0.95 }}
               className="inline-block"
             >
-              <Link 
-                to="/menu" 
+              <button 
+                onClick={() => {
+                  const menuSection = document.getElementById('menu-destacado');
+                  if (menuSection) {
+                    menuSection.scrollIntoView({ 
+                      behavior: 'smooth',
+                      block: 'start'
+                    });
+                  }
+                }}
                 className="inline-flex items-center space-x-3 bg-white text-orange-600 px-8 py-4 rounded-full text-lg font-semibold hover:bg-orange-50 transition-all duration-300 shadow-2xl"
               >
                 <span>Ver Nuestros Servicios</span>
@@ -236,9 +244,9 @@ const HomePage: React.FC = () => {
                   whileHover={{ x: 5 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                 </motion.svg>
-              </Link>
+              </button>
             </motion.div>
           </motion.div>
         </div>
@@ -302,7 +310,7 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* Menú Destacado - Nueva Sección */}
-      <section className="py-20 bg-white">
+      <section id="menu-destacado" className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4">
           <motion.div 
             className="text-center mb-16"

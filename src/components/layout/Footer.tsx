@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
-  DocumentTextIcon,
+  HomeIcon,
   ClipboardDocumentListIcon,
   UserIcon,
   EnvelopeIcon,
@@ -15,24 +15,25 @@ import {
 } from '@heroicons/react/24/outline';
 
 /**
- * Footer de la aplicación
+ * Footer de la aplicación PortoCatering
  * Incluye información de la empresa, enlaces útiles y contacto
- * Diseño elegante con colores naranja
+ * Diseño elegante con colores naranja y responsive
  * 
  * Secciones:
- * - Información de la empresa
+ * - Información de la empresa con logo
  * - Servicios destacados  
+ * - Enlaces de navegación
  * - Información de contacto
  * - Copyright
  */
 const Footer: React.FC = () => {
   return (
     <footer className="bg-gradient-to-br from-gray-900 to-gray-800 text-white">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div className="container mx-auto px-4 py-8 sm:py-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
           
           {/* Información de la empresa */}
-          <div className="space-y-4">
+          <div className="space-y-4 sm:col-span-2 lg:col-span-1">
             <motion.div 
               className="flex items-center space-x-3"
               whileHover={{ scale: 1.05 }}
@@ -43,7 +44,7 @@ const Footer: React.FC = () => {
                 transition={{ duration: 0.2 }}
               >
                 <img 
-                  src="/logo/logoCate.png" 
+                  src="/logo/logoCatemini.png" 
                   alt="PortoCatering Logo" 
                   className="h-12 w-12 object-contain"
                 />
@@ -61,40 +62,40 @@ const Footer: React.FC = () => {
             </p>
           </div>
 
-          {/* Servicios rápidos */}
+          {/* Servicios destacados */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-orange-400">Nuestros Servicios</h3>
             <div className="space-y-3">
               <motion.div 
-                className="flex items-center space-x-2 text-gray-400 hover:text-orange-400 transition-colors"
+                className="flex items-center space-x-2 text-gray-400 hover:text-orange-400 transition-colors cursor-pointer"
                 whileHover={{ x: 5 }}
                 transition={{ duration: 0.2 }}
               >
-                <BuildingOfficeIcon className="h-4 w-4" />
+                <BuildingOfficeIcon className="h-4 w-4 flex-shrink-0" />
                 <span className="text-sm">Eventos Corporativos</span>
               </motion.div>
               <motion.div 
-                className="flex items-center space-x-2 text-gray-400 hover:text-orange-400 transition-colors"
+                className="flex items-center space-x-2 text-gray-400 hover:text-orange-400 transition-colors cursor-pointer"
                 whileHover={{ x: 5 }}
                 transition={{ duration: 0.2 }}
               >
-                <HeartIcon className="h-4 w-4" />
+                <HeartIcon className="h-4 w-4 flex-shrink-0" />
                 <span className="text-sm">Bodas & Celebraciones</span>
               </motion.div>
               <motion.div 
-                className="flex items-center space-x-2 text-gray-400 hover:text-orange-400 transition-colors"
+                className="flex items-center space-x-2 text-gray-400 hover:text-orange-400 transition-colors cursor-pointer"
                 whileHover={{ x: 5 }}
                 transition={{ duration: 0.2 }}
               >
-                <UsersIcon className="h-4 w-4" />
+                <UsersIcon className="h-4 w-4 flex-shrink-0" />
                 <span className="text-sm">Eventos Sociales</span>
               </motion.div>
             </div>
           </div>
 
-          {/* Enlaces rápidos */}
+          {/* Enlaces de navegación */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-orange-400">Enlaces Rápidos</h3>
+            <h3 className="text-lg font-semibold text-orange-400">Navegación</h3>
             <div className="space-y-3">
               <Link 
                 to="/" 
@@ -104,22 +105,11 @@ const Footer: React.FC = () => {
                   whileHover={{ scale: 1.1 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <DocumentTextIcon className="h-4 w-4" />
+                  <HomeIcon className="h-4 w-4 flex-shrink-0" />
                 </motion.div>
                 <span className="text-sm group-hover:translate-x-1 transition-transform">Inicio</span>
               </Link>
-              <Link 
-                to="/menu" 
-                className="flex items-center space-x-2 text-gray-400 hover:text-orange-400 transition-colors group"
-              >
-                <motion.div
-                  whileHover={{ scale: 1.1 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <ClipboardDocumentListIcon className="h-4 w-4" />
-                </motion.div>
-                <span className="text-sm group-hover:translate-x-1 transition-transform">Servicios</span>
-              </Link>
+
               <Link 
                 to="/auth/login" 
                 className="flex items-center space-x-2 text-gray-400 hover:text-orange-400 transition-colors group"
@@ -128,9 +118,9 @@ const Footer: React.FC = () => {
                   whileHover={{ scale: 1.1 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <UserIcon className="h-4 w-4" />
+                  <UserIcon className="h-4 w-4 flex-shrink-0" />
                 </motion.div>
-                <span className="text-sm group-hover:translate-x-1 transition-transform">Admin</span>
+                <span className="text-sm group-hover:translate-x-1 transition-transform">Iniciar Sesión</span>
               </Link>
             </div>
           </div>
@@ -140,36 +130,36 @@ const Footer: React.FC = () => {
             <h3 className="text-lg font-semibold text-orange-400">Contacto</h3>
             <div className="space-y-3">
               <motion.div 
-                className="flex items-center space-x-2 text-gray-400"
+                className="flex items-start space-x-2 text-gray-400"
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.2 }}
               >
-                <EnvelopeIcon className="h-4 w-4 text-orange-500" />
+                <EnvelopeIcon className="h-4 w-4 text-orange-500 mt-0.5 flex-shrink-0" />
                 <span className="text-sm">contacto@portocatering.com</span>
               </motion.div>
               <motion.div 
-                className="flex items-center space-x-2 text-gray-400"
+                className="flex items-start space-x-2 text-gray-400"
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.2 }}
               >
-                <PhoneIcon className="h-4 w-4 text-orange-500" />
-                <span className="text-sm">+1 (555) 123-4567</span>
+                <PhoneIcon className="h-4 w-4 text-orange-500 mt-0.5 flex-shrink-0" />
+                <span className="text-sm">+593 991767957</span>
               </motion.div>
               <motion.div 
-                className="flex items-center space-x-2 text-gray-400"
+                className="flex items-start space-x-2 text-gray-400"
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.2 }}
               >
-                <MapPinIcon className="h-4 w-4 text-orange-500" />
-                <span className="text-sm">Calle Principal #123, Ciudad</span>
+                <MapPinIcon className="h-4 w-4 text-orange-500 mt-0.5 flex-shrink-0" />
+                <span className="text-sm">Portoviejo, Ecuador</span>
               </motion.div>
               <motion.div 
-                className="flex items-center space-x-2 text-gray-400"
+                className="flex items-start space-x-2 text-gray-400"
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.2 }}
               >
-                <ClockIcon className="h-4 w-4 text-orange-500" />
-                <span className="text-sm">Lun-Vie: 8AM-6PM</span>
+                <ClockIcon className="h-4 w-4 text-orange-500 mt-0.5 flex-shrink-0" />
+                <span className="text-sm">Lun-Dom: 7AM-10PM</span>
               </motion.div>
             </div>
           </div>
