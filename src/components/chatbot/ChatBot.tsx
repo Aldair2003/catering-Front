@@ -45,49 +45,44 @@ const ChatBot: React.FC = () => {
 
   const handleSend = async () => {
     if (!input.trim()) return;
-    
-    const userMessage: Message = { 
-      sender: 'user', 
+
+    const userMessage: Message = {
+      sender: 'user',
       text: input.trim(),
       timestamp: new Date()
     };
-    
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
     setLoading(true);
-    simulateTyping();
+    setIsTyping(true);
 
     try {
-      // Simulación de respuesta inteligente
-      const responses = [
-        'Perfecto, puedo ayudarte con eso. ¿Necesitas información sobre nuestros menús o servicios?',
-        'Entiendo tu consulta. Nuestro equipo está especializado en eventos corporativos y celebraciones.',
-        'Excelente pregunta. Podemos personalizar completamente el menú según tus preferencias.',
-        'Te ayudo con gusto. ¿Para cuántas personas estás planificando el evento?',
-        'Claro, podemos coordinar todos los detalles de tu evento de catering.'
-      ];
-      
-      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-      
+      const res = await fetch('http://localhost:3000/api/chatbot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: userMessage.text })
+      });
+      const data = await res.json();
       setTimeout(() => {
         const botMessage: Message = {
           sender: 'bot',
-          text: randomResponse,
+          text: data.response || 'Sin respuesta.',
           timestamp: new Date()
         };
         setMessages((prev) => [...prev, botMessage]);
         setLoading(false);
-      }, 1500);
-      
+        setIsTyping(false);
+      }, 1200);
     } catch (err) {
       setTimeout(() => {
-        setMessages((prev) => [...prev, { 
-          sender: 'bot', 
+        setMessages((prev) => [...prev, {
+          sender: 'bot',
           text: 'Disculpa, hay un problema de conexión. Por favor intenta nuevamente.',
           timestamp: new Date()
         }]);
         setLoading(false);
-      }, 1500);
+        setIsTyping(false);
+      }, 1200);
     }
   };
 
