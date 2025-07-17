@@ -10,8 +10,7 @@ import {
   ClockIcon,
   UserIcon,
   BuildingOfficeIcon,
-  FireIcon,
-  BeakerIcon
+  FireIcon
 } from '@heroicons/react/24/outline';
 
 /**
