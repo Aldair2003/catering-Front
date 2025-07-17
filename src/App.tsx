@@ -34,11 +34,8 @@ import MetricsPage from './pages/admin/MetricsPage';
  * Configura el sistema de rutas con layouts apropiados
  * 
  * Estructura de rutas:
- * - Públicas: Home (con Layout normal)
- * - Auth: Login, Register (sin Layout)
- * - Dashboard: Admin dashboard con sidebar
- * - Cliente: Páginas con DashboardLayout
- * - Admin: Páginas administrativas con DashboardLayout
+ * - Públicas: Home, Login, Register (con Layout normal o sin layout)
+ * - Dashboard: Rutas protegidas con DashboardLayout y sidebar
  */
 function App() {
   return (
@@ -47,17 +44,19 @@ function App() {
         <SidebarProvider>
           <div className="App">
             <Routes>
-              {/* Rutas públicas con Layout normal */}
-              <Route path="/" element={<Layout><div /></Layout>}>
+              {/* Rutas públicas */}
+              <Route path="/" element={<Layout />}>
                 <Route index element={<HomePage />} />
-                <Route path="auth/login" element={<LoginPage />} />
-                <Route path="auth/register" element={<RegisterPage />} />
               </Route>
+
+              {/* Rutas de autenticación (sin layout) */}
+              <Route path="/auth/login" element={<LoginPage />} />
+              <Route path="/auth/register" element={<RegisterPage />} />
 
               {/* Rutas del dashboard con DashboardLayout */}
               <Route path="/" element={
                 <ProtectedRoute>
-                  <DashboardLayout><div /></DashboardLayout>
+                  <DashboardLayout />
                 </ProtectedRoute>
               }>
                 {/* Rutas de cliente */}

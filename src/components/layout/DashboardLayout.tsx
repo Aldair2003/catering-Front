@@ -1,5 +1,6 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import ChatBot from '../chatbot/ChatBot';
 import { useSidebar } from '../../contexts/SidebarContext';
@@ -9,12 +10,9 @@ import { Bars3Icon } from '@heroicons/react/24/outline';
  * Layout para páginas del dashboard
  * Incluye sidebar responsive, contenido principal y chatbot integrado
  * Sin header ni footer para maximizar espacio de trabajo
+ * Usa Outlet para renderizar rutas anidadas
  */
-interface DashboardLayoutProps {
-  children: React.ReactNode;
-}
-
-const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
+const DashboardLayout: React.FC = () => {
   const location = useLocation();
   const { isOpen, toggleSidebar, closeSidebar, isMobile } = useSidebar();
   const isAdminRoute = location.pathname.startsWith('/admin') || location.pathname === '/dashboard';
@@ -40,7 +38,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
           <button
             onClick={toggleSidebar}
-            className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            className="p-2 rounded-lg hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500"
           >
             <Bars3Icon className="h-6 w-6 text-gray-600" />
           </button>
@@ -54,7 +52,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
         {/* Área de contenido */}
         <div className="p-6 pb-20">
-          {children}
+          <Outlet />
         </div>
         
         {/* ChatBot integrado */}

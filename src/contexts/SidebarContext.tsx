@@ -23,24 +23,28 @@ interface SidebarProviderProps {
 }
 
 export const SidebarProvider: React.FC<SidebarProviderProps> = ({ children }) => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isInitialized, setIsInitialized] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   // Detectar si estamos en móvil
   useEffect(() => {
     const checkMobile = () => {
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
-      // En móvil, sidebar debe empezar cerrado
-      if (mobile && isOpen) {
-        setIsOpen(false);
+      
+      // Solo establecer el estado inicial una vez
+      if (!isInitialized) {
+        const initialState = !mobile; // Abierto en desktop, cerrado en móvil
+        setIsOpen(initialState);
+        setIsInitialized(true);
       }
     };
 
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
-  }, [isOpen]);
+  }, [isInitialized]);
 
   const toggleSidebar = () => setIsOpen(!isOpen);
   const closeSidebar = () => setIsOpen(false);
