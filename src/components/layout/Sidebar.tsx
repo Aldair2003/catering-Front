@@ -160,8 +160,8 @@ const Sidebar: React.FC = () => {
         }}
         className={`
           ${isMobile 
-            ? 'fixed top-0 left-0 h-full w-64 bg-white shadow-xl z-50' 
-            : 'relative h-screen bg-white shadow-lg border-r border-gray-200 overflow-hidden'
+            ? 'fixed top-0 left-0 h-screen w-64 bg-white shadow-xl z-50' 
+            : 'sticky top-0 h-screen bg-white shadow-lg border-r border-gray-200 overflow-hidden'
           }
         `}
       >
@@ -197,7 +197,7 @@ const Sidebar: React.FC = () => {
           </div>
 
           {/* Navegación */}
-          <nav className="flex-1 p-4">
+          <nav className="flex-1 p-4 overflow-y-auto">
             <ul className="space-y-2">
               {navItems.map((item, index) => {
                 const isActive = isActivePath(item.path);
@@ -231,7 +231,7 @@ const Sidebar: React.FC = () => {
           </nav>
 
           {/* Footer */}
-          <div className="p-4 border-t border-gray-100">
+          <div className="p-4 border-t border-gray-100 flex-shrink-0">
             <button
               onClick={handleLogout}
               className="flex items-center space-x-3 w-full px-4 py-3 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded-xl transition-all duration-200"
