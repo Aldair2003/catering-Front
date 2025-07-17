@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   HomeIcon, 
   ClipboardDocumentListIcon, 
@@ -9,7 +9,8 @@ import {
   ChartBarIcon,
   UsersIcon,
   CubeIcon,
-  TruckIcon
+  TruckIcon,
+  XMarkIcon
 } from '@heroicons/react/24/outline';
 import {
   HomeIcon as HomeIconSolid,
@@ -20,14 +21,17 @@ import {
   CubeIcon as CubeIconSolid,
   TruckIcon as TruckIconSolid
 } from '@heroicons/react/24/solid';
+import { useSidebar } from '../../contexts/SidebarContext';
 
 /**
- * Sidebar principal con navegación adaptativa
+ * Sidebar responsive con navegación adaptativa
  * Cambia opciones según si es ruta de admin o cliente
+ * Se puede ocultar/mostrar y se adapta a móviles
  */
 const Sidebar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { isOpen, closeSidebar, isMobile } = useSidebar();
 
   // Determinar si estamos en rutas de admin
   const isAdminRoute = location.pathname.startsWith('/admin') || location.pathname === '/dashboard';
@@ -66,79 +70,122 @@ const Sidebar: React.FC = () => {
     return location.pathname === path;
   };
 
+  const handleNavClick = () => {
+    if (isMobile) {
+      closeSidebar();
+    }
+  };
+
   return (
-    <motion.aside 
-      className="fixed top-0 left-0 h-full w-64 bg-white border-r border-gray-200 shadow-lg flex flex-col z-40"
-      initial={{ x: -100 }}
-      animate={{ x: 0 }}
-      transition={{ duration: 0.3 }}
-    >
-      {/* Header del Sidebar */}
-      <motion.div 
-        className="px-6 py-6 border-b border-gray-100"
-        whileHover={{ scale: 1.02 }}
-        transition={{ duration: 0.2 }}
-      >
-        <div className="flex items-center space-x-3">
-          <img 
-            src="/logo/logoCatemini.png" 
-            alt="PortoCatering Logo" 
-            className="h-8 w-8 object-contain"
-          />
-          <span className="text-xl font-bold bg-gradient-to-r from-orange-600 to-orange-800 bg-clip-text text-transparent">
-            PortoCatering
-          </span>
-        </div>
-        {isAdminRoute && (
-          <div className="mt-2">
-            <span className="text-xs text-orange-600 font-semibold bg-orange-50 px-2 py-1 rounded-full">
-              ADMIN
-            </span>
-          </div>
-        )}
-      </motion.div>
-
-      {/* Navegación */}
-      <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-        {navItems.map((item) => {
-          const isActive = isActivePath(item.path);
-          const Icon = isActive ? item.iconSolid : item.icon;
-          
-          return (
-            <motion.div
-              key={item.path}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <Link
-                to={item.path}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
-                  isActive 
-                    ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg' 
-                    : 'text-gray-700 hover:bg-orange-50 hover:text-orange-600'
-                }`}
-              >
-                <Icon className="h-5 w-5" />
-                <span>{item.name}</span>
-              </Link>
-            </motion.div>
-          );
-        })}
-      </nav>
-
-      {/* Footer del Sidebar */}
-      <div className="p-4 border-t border-gray-100">
-        <motion.button
-          className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50 transition-all duration-200"
-          onClick={handleLogout}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
+    <AnimatePresence>
+      {isOpen && (
+        <motion.aside 
+          className={`fixed top-0 left-0 h-full w-64 bg-white border-r border-gray-200 shadow-lg flex flex-col z-40 ${
+            isMobile ? 'md:relative' : ''
+          }`}
+          initial={{ x: -256 }}
+          animate={{ x: 0 }}
+          exit={{ x: -256 }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
         >
-          <ArrowLeftOnRectangleIcon className="h-5 w-5" />
-          <span>Cerrar Sesión</span>
-        </motion.button>
-      </div>
-    </motion.aside>
+          {/* Header del Sidebar */}
+          <motion.div 
+            className="px-6 py-6 border-b border-gray-100 relative"
+            whileHover={{ scale: 1.02 }}
+            transition={{ duration: 0.2 }}
+          >
+            {/* Botón cerrar para móvil */}
+            {isMobile && (
+              <button
+                onClick={closeSidebar}
+                className="absolute top-4 right-4 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              >
+                <XMarkIcon className="h-5 w-5 text-gray-500" />
+              </button>
+            )}
+
+            <div className="flex items-center space-x-3">
+              <img 
+                src="/logo/logoCatemini.png" 
+                alt="PortoCatering Logo" 
+                className="h-8 w-8 object-contain"
+              />
+              <span className="text-xl font-bold bg-gradient-to-r from-orange-600 to-orange-800 bg-clip-text text-transparent">
+                PortoCatering
+              </span>
+            </div>
+            {isAdminRoute && (
+              <div className="mt-2">
+                <span className="text-xs text-orange-600 font-semibold bg-orange-50 px-2 py-1 rounded-full">
+                  ADMIN
+                </span>
+              </div>
+            )}
+          </motion.div>
+
+          {/* Navegación */}
+          <nav className="flex-1 px-4 py-6 overflow-y-auto">
+            <ul className="space-y-2">
+              {navItems.map((item, index) => {
+                const isActive = isActivePath(item.path);
+                const Icon = isActive ? item.iconSolid : item.icon;
+                
+                return (
+                  <motion.li 
+                    key={item.name}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                  >
+                    <Link
+                      to={item.path}
+                      onClick={handleNavClick}
+                      className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 group ${
+                        isActive
+                          ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-md'
+                          : 'text-gray-700 hover:bg-orange-50 hover:text-orange-600'
+                      }`}
+                    >
+                      <Icon className={`mr-3 h-5 w-5 transition-transform group-hover:scale-110 ${
+                        isActive ? 'text-white' : 'text-gray-500 group-hover:text-orange-600'
+                      }`} />
+                      <span className="flex-1">{item.name}</span>
+                      {isActive && (
+                        <motion.div
+                          className="w-2 h-2 bg-white rounded-full"
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{ duration: 0.2 }}
+                        />
+                      )}
+                    </Link>
+                  </motion.li>
+                );
+              })}
+            </ul>
+          </nav>
+
+          {/* Logout */}
+          <motion.div 
+            className="px-4 py-6 border-t border-gray-100"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+          >
+            <button
+              onClick={() => {
+                handleLogout();
+                handleNavClick();
+              }}
+              className="flex items-center w-full px-4 py-3 text-sm font-medium text-gray-700 rounded-lg hover:bg-red-50 hover:text-red-600 transition-all duration-200 group"
+            >
+              <ArrowLeftOnRectangleIcon className="mr-3 h-5 w-5 text-gray-500 group-hover:text-red-600 transition-transform group-hover:scale-110" />
+              <span>Cerrar Sesión</span>
+            </button>
+          </motion.div>
+        </motion.aside>
+      )}
+    </AnimatePresence>
   );
 };
 

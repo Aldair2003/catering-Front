@@ -4,6 +4,8 @@ import './App.css';
 
 // Context
 import { AuthProvider } from './contexts/AuthContext';
+import { SidebarProvider } from './contexts/SidebarContext';
+import ProtectedRoute from './components/ProtectedRoute';
 
 // Layout Components
 import Layout from './components/layout/Layout';
@@ -40,80 +42,43 @@ import MetricsPage from './pages/admin/MetricsPage';
  */
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <div className="App">
-          <Routes>
-            {/* Rutas Públicas */}
-            <Route path="/" element={
-              <Layout>
-                <HomePage />
-              </Layout>
-            } />
-            
-            {/* Rutas de Autenticación (sin layout) */}
-            <Route path="/auth/login" element={<LoginPage />} />
-            <Route path="/auth/register" element={<RegisterPage />} />
-            
-            {/* Dashboard Principal */}
-            <Route path="/dashboard" element={
-              <DashboardLayout>
-                <AdminDashboard />
-              </DashboardLayout>
-            } />
-            
-            {/* Rutas de Cliente con Dashboard Layout */}
-            <Route path="/menu" element={
-              <DashboardLayout>
-                <MenuPage />
-              </DashboardLayout>
-            } />
-            <Route path="/cart" element={
-              <DashboardLayout>
-                <CartPage />
-              </DashboardLayout>
-            } />
-            <Route path="/orders" element={
-              <DashboardLayout>
-                <OrdersPage />
-              </DashboardLayout>
-            } />
-            <Route path="/profile" element={
-              <DashboardLayout>
-                <ProfilePage />
-              </DashboardLayout>
-            } />
-            
-            {/* Rutas de Administración con Dashboard Layout */}
-            <Route path="/admin" element={
-              <DashboardLayout>
-                <AdminDashboard />
-              </DashboardLayout>
-            } />
-            <Route path="/admin/clients" element={
-              <DashboardLayout>
-                <ClientManagement />
-              </DashboardLayout>
-            } />
-            <Route path="/admin/inventory" element={
-              <DashboardLayout>
-                <InventoryPage />
-              </DashboardLayout>
-            } />
-            <Route path="/admin/delivery" element={
-              <DashboardLayout>
-                <DeliveryPage />
-              </DashboardLayout>
-            } />
-            <Route path="/admin/metrics" element={
-              <DashboardLayout>
-                <MetricsPage />
-              </DashboardLayout>
-            } />
-          </Routes>
-        </div>
-      </Router>
-    </AuthProvider>
+    <Router>
+      <AuthProvider>
+        <SidebarProvider>
+          <div className="App">
+            <Routes>
+              {/* Rutas públicas con Layout normal */}
+              <Route path="/" element={<Layout><div /></Layout>}>
+                <Route index element={<HomePage />} />
+                <Route path="auth/login" element={<LoginPage />} />
+                <Route path="auth/register" element={<RegisterPage />} />
+              </Route>
+
+              {/* Rutas del dashboard con DashboardLayout */}
+              <Route path="/" element={
+                <ProtectedRoute>
+                  <DashboardLayout><div /></DashboardLayout>
+                </ProtectedRoute>
+              }>
+                {/* Rutas de cliente */}
+                <Route path="dashboard" element={<AdminDashboard />} />
+                <Route path="menu" element={<MenuPage />} />
+                <Route path="cart" element={<CartPage />} />
+                <Route path="orders" element={<OrdersPage />} />
+                <Route path="profile" element={<ProfilePage />} />
+
+                {/* Rutas de admin */}
+                <Route path="admin" element={<AdminDashboard />} />
+                <Route path="admin/clients" element={<ClientManagement />} />
+                <Route path="admin/inventory" element={<InventoryPage />} />
+                <Route path="admin/delivery" element={<DeliveryPage />} />
+                <Route path="admin/metrics" element={<MetricsPage />} />
+              </Route>
+            </Routes>
+          </div>
+        </SidebarProvider>
+      </AuthProvider>
+    </Router>
   );
 }
 
