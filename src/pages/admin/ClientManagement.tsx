@@ -1,379 +1,342 @@
-import React, { useState, useEffect } from 'react';
-import { Client, ClientSearchParams } from '../../types/client';
-import { clientService } from '../../services/client.service';
-import ClientModal from '../../components/client/ClientModal';
-import ClientOrderHistoryModal from '../../components/client/ClientOrderHistoryModal';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import {
+  UsersIcon,
+  MagnifyingGlassIcon,
+  PlusIcon,
+  EyeIcon,
+  PencilIcon,
+  TrashIcon,
+  FunnelIcon,
+  DocumentDuplicateIcon,
+  PhoneIcon,
+  MapPinIcon,
+  EnvelopeIcon,
+  CalendarDaysIcon,
+  ChartBarIcon
+} from '@heroicons/react/24/outline';
 
-/**
- * Gestión de Clientes
- * Administración completa de clientes registrados
- * 
- * Funcionalidades:
- * - Lista de clientes registrados
- * - Edición de información de cliente
- * - Historial de pedidos por cliente
- * - Estadísticas de clientes recurrentes
- */
+interface Client {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  company: string;
+  status: 'Activo' | 'Inactivo';
+  totalOrders: number;
+  totalSpent: number;
+  lastOrder: string;
+  registeredAt: string;
+}
+
 const ClientManagement: React.FC = () => {
-  const [clients, setClients] = useState<Client[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
-  const [total, setTotal] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
-  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
-  const [selectedClientForHistory, setSelectedClientForHistory] = useState<{ id: number; name: string } | null>(null);
-  const [isDeleting, setIsDeleting] = useState<number | null>(null);
+  const [statusFilter, setStatusFilter] = useState('Todos');
+  const [showModal, setShowModal] = useState(false);
 
-  const limit = 10;
-
-  useEffect(() => {
-    fetchClients();
-  }, [currentPage]);
-
-  const fetchClients = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await clientService.getClients(currentPage, limit);
-      setClients(response.clientes || []); // Usar clientes en lugar de data
-      setTotalPages(response.totalPages);
-      setTotal(response.total);
-    } catch (err) {
-      setError('Error al cargar los clientes');
-      console.error('Error fetching clients:', err);
-      setClients([]); // Asegurar que clients nunca sea undefined
-    } finally {
-      setLoading(false);
+  // Datos mock de clientes
+  const mockClients: Client[] = [
+    {
+      id: '1',
+      name: 'Miguel Alejandro Zea Parraga',
+      email: 'alejandrozea79@gmail.com',
+      phone: '0986032246',
+      address: 'Portoviejo',
+      company: 'Empresa ABC',
+      status: 'Activo',
+      totalOrders: 15,
+      totalSpent: 2850.00,
+      lastOrder: '2025-01-15',
+      registeredAt: '17/7/2025'
+    },
+    {
+      id: '2',
+      name: 'Usuario Test',
+      email: 'test@test.com',
+      phone: '0999999999',
+      address: 'Ciudad Test',
+      company: 'Test Company',
+      status: 'Activo',
+      totalOrders: 8,
+      totalSpent: 1200.00,
+      lastOrder: '2025-01-10',
+      registeredAt: '17/7/2025'
+    },
+    {
+      id: '3',
+      name: 'Christian',
+      email: 'christian_prueba@gmail.com',
+      phone: '123456789',
+      address: 'Calle 123, Ciudad',
+      company: 'Innovación S.A.',
+      status: 'Activo',
+      totalOrders: 22,
+      totalSpent: 4500.00,
+      lastOrder: '2025-01-18',
+      registeredAt: '17/7/2025'
+    },
+    {
+      id: '4',
+      name: 'Ana García',
+      email: 'ana.garcia@empresa.com',
+      phone: '0987654321',
+      address: 'Av. Principal 456',
+      company: 'Corporación XYZ',
+      status: 'Inactivo',
+      totalOrders: 5,
+      totalSpent: 750.00,
+      lastOrder: '2024-12-20',
+      registeredAt: '15/6/2025'
     }
-  };
+  ];
 
-  const handleSearch = async () => {
-    if (!searchTerm.trim()) {
-      fetchClients();
-      return;
+  const filteredClients = mockClients.filter(client => {
+    const matchesSearch = client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         client.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         client.phone.includes(searchTerm);
+    const matchesStatus = statusFilter === 'Todos' || client.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  const stats = [
+    {
+      title: 'Total Clientes',
+      value: mockClients.length.toString(),
+      icon: UsersIcon,
+      color: 'bg-blue-500',
+      change: '+12% este mes'
+    },
+    {
+      title: 'Clientes Activos',
+      value: mockClients.filter(c => c.status === 'Activo').length.toString(),
+      icon: ChartBarIcon,
+      color: 'bg-green-500',
+      change: '95% de retención'
+    },
+    {
+      title: 'Pedidos Totales',
+      value: mockClients.reduce((sum, c) => sum + c.totalOrders, 0).toString(),
+      icon: DocumentDuplicateIcon,
+      color: 'bg-orange-500',
+      change: '+18% esta semana'
+    },
+    {
+      title: 'Ingresos Clientes',
+      value: `$${mockClients.reduce((sum, c) => sum + c.totalSpent, 0).toLocaleString()}`,
+      icon: ChartBarIcon,
+      color: 'bg-purple-500',
+      change: '+25% mensual'
     }
-
-    setLoading(true);
-    setError(null);
-    try {
-      const searchParams: ClientSearchParams = {};
-      if (searchTerm.includes('@')) {
-        searchParams.email = searchTerm;
-      } else if (/^\d+/.test(searchTerm)) {
-        searchParams.telefono = searchTerm;
-      } else {
-        searchParams.nombre = searchTerm;
-      }
-
-      const results = await clientService.searchClients(searchParams);
-      setClients(results || []); // Asegurar que nunca sea undefined
-      setTotalPages(1);
-      setTotal((results || []).length);
-    } catch (err) {
-      setError('Error al buscar clientes');
-      console.error('Error searching clients:', err);
-      setClients([]); // Establecer array vacío en caso de error
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleCreateClient = () => {
-    setSelectedClient(null);
-    setIsModalOpen(true);
-  };
-
-  const handleEditClient = (client: Client) => {
-    setSelectedClient(client);
-    setIsModalOpen(true);
-  };
-
-  const handleSaveClient = async (clientData: any) => {
-    try {
-      if (selectedClient) {
-        await clientService.updateClient(selectedClient.id, clientData);
-      } else {
-        await clientService.createClient(clientData);
-      }
-      fetchClients();
-      setIsModalOpen(false);
-    } catch (err) {
-      console.error('Error saving client:', err);
-      throw err;
-    }
-  };
-
-  const handleDeleteClient = async (id: number) => {
-    if (!window.confirm('¿Estás seguro de que quieres eliminar este cliente?')) {
-      return;
-    }
-
-    setIsDeleting(id);
-    try {
-      await clientService.deleteClient(id);
-      fetchClients();
-    } catch (err) {
-      setError('Error al eliminar el cliente');
-      console.error('Error deleting client:', err);
-    } finally {
-      setIsDeleting(null);
-    }
-  };
-
-  const handleViewHistory = (client: Client) => {
-    setSelectedClientForHistory({
-      id: client.id,
-      name: `${client.nombre} ${client.apellido || ''}`.trim()
-    });
-    setIsHistoryModalOpen(true);
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-ES');
-  };
+  ];
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-lg p-6 text-white">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
+      {/* Header con estadísticas */}
+      <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-6 text-white">
+        <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-3xl font-bold mb-2">
-              👥 Gestión de Clientes
+            <h1 className="text-3xl font-bold flex items-center gap-3">
+              <UsersIcon className="w-8 h-8" />
+              Gestión de Clientes
             </h1>
-            <p className="text-blue-100">
-              Administra y supervisa todos los clientes registrados
-            </p>
+            <p className="text-blue-100 mt-2">Administra y supervisa todos los clientes registrados</p>
           </div>
-          <div className="mt-4 md:mt-0">
-            <div className="bg-white bg-opacity-20 rounded-lg p-4 text-center">
-              <p className="text-2xl font-bold">{total}</p>
-              <p className="text-sm text-blue-100">Total Clientes</p>
-            </div>
+          <div className="text-right">
+            <div className="text-2xl font-bold">{mockClients.length}</div>
+            <div className="text-blue-200 text-sm">Total Clientes</div>
           </div>
         </div>
       </div>
 
-      {/* Search and Actions */}
-      <div className="bg-white rounded-lg shadow-md p-6">
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {stats.map((stat, index) => (
+          <motion.div
+            key={stat.title}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+            className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-200"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-sm font-medium">{stat.title}</p>
+                <p className="text-2xl font-bold text-gray-900 mt-1">{stat.value}</p>
+                <p className="text-green-600 text-sm font-medium mt-1">{stat.change}</p>
+              </div>
+              <div className={`p-3 rounded-lg ${stat.color}`}>
+                <stat.icon className="w-6 h-6 text-white" />
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Controles y filtros */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="bg-white rounded-xl p-6 shadow-sm"
+      >
         <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-          <div className="flex-1 max-w-md">
-            <div className="relative">
+          <div className="flex flex-1 gap-4 w-full md:w-auto">
+            {/* Búsqueda */}
+            <div className="relative flex-1 max-w-md">
+              <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
                 placeholder="Buscar por nombre, email o teléfono..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
-                <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </div>
+            </div>
+
+            {/* Filtro por estado */}
+            <div className="relative">
+              <FunnelIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="pl-10 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white"
+              >
+                <option value="Todos">Todos</option>
+                <option value="Activo">Activos</option>
+                <option value="Inactivo">Inactivos</option>
+              </select>
             </div>
           </div>
-          
-          <div className="flex gap-2">
-            <button
-              onClick={handleSearch}
-              className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
-            >
-              🔍 Buscar
-            </button>
-            <button
-              onClick={() => {
-                setSearchTerm('');
-                fetchClients();
-              }}
-              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
-            >
-              Limpiar
-            </button>
-            <button
-              onClick={handleCreateClient}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              ➕ Nuevo Cliente
-            </button>
-          </div>
-        </div>
-      </div>
 
-      {/* Error Message */}
-      {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-          {error}
+          {/* Botón nuevo cliente */}
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => setShowModal(true)}
+            className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-2 rounded-lg hover:shadow-lg transition-all duration-200"
+          >
+            <PlusIcon className="w-5 h-5" />
+            Nuevo Cliente
+          </motion.button>
         </div>
-      )}
+      </motion.div>
 
-      {/* Loading */}
-      {loading && (
-        <div className="flex justify-center items-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          <span className="ml-2 text-gray-600">Cargando clientes...</span>
+      {/* Tabla de clientes */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+        className="bg-white rounded-xl shadow-sm overflow-hidden"
+      >
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cliente</th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contacto</th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Empresa</th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Registro</th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {filteredClients.map((client, index) => (
+                <motion.tr
+                  key={client.id}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="hover:bg-gray-50 transition-colors duration-150"
+                >
+                  <td className="px-6 py-4">
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                        {client.name.split(' ').map(n => n[0]).join('').substring(0, 2)}
+                      </div>
+                      <div className="ml-3">
+                        <div className="text-sm font-medium text-gray-900">{client.name}</div>
+                        <div className="flex items-center gap-1 text-sm text-gray-500">
+                          <DocumentDuplicateIcon className="w-4 h-4" />
+                          {client.totalOrders} pedidos · ${client.totalSpent.toLocaleString()}
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2 text-sm text-gray-900">
+                        <EnvelopeIcon className="w-4 h-4 text-gray-400" />
+                        {client.email}
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-gray-500">
+                        <PhoneIcon className="w-4 h-4 text-gray-400" />
+                        {client.phone}
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-gray-500">
+                        <MapPinIcon className="w-4 h-4 text-gray-400" />
+                        {client.address}
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="text-sm text-gray-900">{client.company || '-'}</div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      client.status === 'Activo' 
+                        ? 'bg-green-100 text-green-800' 
+                        : 'bg-red-100 text-red-800'
+                    }`}>
+                      {client.status}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-1 text-sm text-gray-500">
+                      <CalendarDaysIcon className="w-4 h-4" />
+                      {client.registeredAt}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-2">
+                      <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                        <EyeIcon className="w-4 h-4" />
+                      </button>
+                      <button className="p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors">
+                        <PencilIcon className="w-4 h-4" />
+                      </button>
+                      <button className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                        <TrashIcon className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </td>
+                </motion.tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-      )}
 
-      {/* Clients Table */}
-      {!loading && Array.isArray(clients) && (
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
-          {clients.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="text-6xl mb-4">👤</div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                No hay clientes registrados
-              </h3>
-              <p className="text-gray-600 mb-4">
-                Comienza agregando tu primer cliente
-              </p>
-              <button
-                onClick={handleCreateClient}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-              >
-                ➕ Crear Primer Cliente
+        {/* Paginación */}
+        <div className="bg-gray-50 px-6 py-3 border-t border-gray-200">
+          <div className="flex items-center justify-between">
+            <div className="text-sm text-gray-700">
+              Mostrando <span className="font-medium">{filteredClients.length}</span> de <span className="font-medium">{mockClients.length}</span> clientes
+            </div>
+            <div className="flex gap-2">
+              <button className="px-3 py-1 border border-gray-300 rounded-md text-sm hover:bg-gray-50">
+                Anterior
+              </button>
+              <button className="px-3 py-1 bg-blue-600 text-white rounded-md text-sm">
+                1
+              </button>
+              <button className="px-3 py-1 border border-gray-300 rounded-md text-sm hover:bg-gray-50">
+                Siguiente
               </button>
             </div>
-          ) : (
-            <>
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Cliente
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Contacto
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Empresa
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Estado
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Registro
-                      </th>
-                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Acciones
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {clients.map((client) => (
-                      <tr key={client.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div>
-                            <div className="text-sm font-medium text-gray-900">
-                              {client.nombre} {client.apellido}
-                            </div>
-                            <div className="text-sm text-gray-500">{client.email}</div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">{client.telefono}</div>
-                          <div className="text-sm text-gray-500">{client.direccion}</div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {client.empresa || '-'}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                            client.activo 
-                              ? 'bg-green-100 text-green-800' 
-                              : 'bg-red-100 text-red-800'
-                          }`}>
-                            {client.activo ? 'Activo' : 'Inactivo'}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {formatDate(client.createdAt)}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                          <div className="flex justify-end space-x-2">
-                            <button
-                              onClick={() => handleViewHistory(client)}
-                              className="text-blue-600 hover:text-blue-900 text-sm"
-                              title="Ver historial"
-                            >
-                              📋
-                            </button>
-                            <button
-                              onClick={() => handleEditClient(client)}
-                              className="text-indigo-600 hover:text-indigo-900 text-sm"
-                              title="Editar"
-                            >
-                              ✏️
-                            </button>
-                            <button
-                              onClick={() => handleDeleteClient(client.id)}
-                              disabled={isDeleting === client.id}
-                              className="text-red-600 hover:text-red-900 text-sm disabled:opacity-50"
-                              title="Eliminar"
-                            >
-                              {isDeleting === client.id ? '⏳' : '🗑️'}
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Pagination */}
-              {totalPages > 1 && (
-                <div className="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
-                  <div className="flex justify-between items-center">
-                    <div className="text-sm text-gray-700">
-                      Mostrando página {currentPage} de {totalPages} ({total} clientes)
-                    </div>
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                        disabled={currentPage === 1}
-                        className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50"
-                      >
-                        Anterior
-                      </button>
-                      <button
-                        onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                        disabled={currentPage === totalPages}
-                        className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50"
-                      >
-                        Siguiente
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </>
-          )}
+          </div>
         </div>
-      )}
-
-      {/* Modals */}
-      <ClientModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSave={handleSaveClient}
-        client={selectedClient}
-      />
-
-      {selectedClientForHistory && (
-        <ClientOrderHistoryModal
-          isOpen={isHistoryModalOpen}
-          onClose={() => setIsHistoryModalOpen(false)}
-          clientId={selectedClientForHistory.id}
-          clientName={selectedClientForHistory.name}
-        />
-      )}
+      </motion.div>
     </div>
   );
 };

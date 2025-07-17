@@ -11,6 +11,30 @@ import {
   ArrowTrendingUpIcon,
   ExclamationTriangleIcon
 } from '@heroicons/react/24/outline';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  LineElement,
+  PointElement,
+} from 'chart.js';
+import { Line, Bar } from 'react-chartjs-2';
+
+// Registrar componentes de Chart.js
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  LineElement,
+  PointElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -88,6 +112,130 @@ const AdminDashboard: React.FC = () => {
     { id: 3, text: 'Entrega completada: Evento Corporativo', time: 'Hace 30 min', type: 'success' },
     { id: 4, text: 'Nuevo cliente registrado', time: 'Hace 1 hora', type: 'info' }
   ];
+
+  // Datos para el gráfico de ventas semanales
+  const weeklyData = {
+    labels: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'],
+    datasets: [
+      {
+        label: 'Ventas ($)',
+        data: [2400, 3200, 2800, 4100, 3800, 5200, 4600],
+        borderColor: 'rgb(249, 115, 22)', // orange-500
+        backgroundColor: 'rgba(249, 115, 22, 0.1)',
+        tension: 0.4,
+        fill: true,
+      },
+      {
+        label: 'Pedidos',
+        data: [8, 12, 10, 15, 14, 18, 16],
+        borderColor: 'rgb(59, 130, 246)', // blue-500
+        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+        tension: 0.4,
+        fill: true,
+        yAxisID: 'y1',
+      }
+    ],
+  };
+
+  // Opciones del gráfico
+  const chartOptions = {
+    responsive: true,
+    interaction: {
+      mode: 'index' as const,
+      intersect: false,
+    },
+    plugins: {
+      legend: {
+        position: 'top' as const,
+      },
+      title: {
+        display: false,
+      },
+    },
+    scales: {
+      x: {
+        display: true,
+        title: {
+          display: true,
+          text: 'Días de la Semana'
+        }
+      },
+      y: {
+        type: 'linear' as const,
+        display: true,
+        position: 'left' as const,
+        title: {
+          display: true,
+          text: 'Ventas ($)'
+        },
+      },
+      y1: {
+        type: 'linear' as const,
+        display: true,
+        position: 'right' as const,
+        title: {
+          display: true,
+          text: 'Pedidos'
+        },
+        grid: {
+          drawOnChartArea: false,
+        },
+      },
+    },
+  };
+
+  // Datos para gráfico de barras de productos más vendidos
+  const topProductsData = {
+    labels: ['Pollo a la Plancha', 'Ensalada César', 'Pasta Alfredo', 'Salmón Grillado', 'Tarta de Chocolate'],
+    datasets: [
+      {
+        label: 'Unidades Vendidas',
+        data: [45, 38, 32, 28, 22],
+        backgroundColor: [
+          'rgba(249, 115, 22, 0.8)', // orange
+          'rgba(59, 130, 246, 0.8)', // blue
+          'rgba(16, 185, 129, 0.8)', // green
+          'rgba(139, 92, 246, 0.8)', // purple
+          'rgba(236, 72, 153, 0.8)', // pink
+        ],
+        borderColor: [
+          'rgba(249, 115, 22, 1)',
+          'rgba(59, 130, 246, 1)',
+          'rgba(16, 185, 129, 1)',
+          'rgba(139, 92, 246, 1)',
+          'rgba(236, 72, 153, 1)',
+        ],
+        borderWidth: 2,
+        borderRadius: 6,
+      },
+    ],
+  };
+
+  const barOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: false,
+      },
+      title: {
+        display: false,
+      },
+    },
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: 'Productos'
+        }
+      },
+      y: {
+        title: {
+          display: true,
+          text: 'Unidades Vendidas'
+        }
+      },
+    },
+  };
 
   return (
     <div className="space-y-6">
@@ -189,22 +337,34 @@ const AdminDashboard: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* Chart Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-        className="bg-white rounded-xl p-6 shadow-sm"
-      >
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Resumen Semanal</h2>
-        <div className="h-64 bg-gray-50 rounded-lg flex items-center justify-center">
-          <div className="text-center">
-            <ChartBarIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-500">Gráfico de ventas semanales</p>
-            <p className="text-sm text-gray-400">Integración con Chart.js próximamente</p>
+      {/* Charts Section */}
+      <div className="grid lg:grid-cols-2 gap-6">
+        {/* Weekly Sales Chart */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="bg-white rounded-xl p-6 shadow-sm"
+        >
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">Ventas Semanales</h2>
+          <div className="h-80">
+            <Line data={weeklyData} options={chartOptions} />
           </div>
-        </div>
-      </motion.div>
+        </motion.div>
+
+        {/* Top Products Chart */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="bg-white rounded-xl p-6 shadow-sm"
+        >
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">Productos Más Vendidos</h2>
+          <div className="h-80">
+            <Bar data={topProductsData} options={barOptions} />
+          </div>
+        </motion.div>
+      </div>
     </div>
   );
 };
