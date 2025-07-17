@@ -2,6 +2,9 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 
+// Context
+import { AuthProvider } from './contexts/AuthContext';
+
 // Layout Components
 import Layout from './components/layout/Layout';
 
@@ -34,71 +37,80 @@ import MetricsPage from './pages/admin/MetricsPage';
  */
 function App() {
   return (
-    <Router>
-      <div className="App">
-        <Routes>
-          {/* Rutas Públicas */}
-          <Route path="/" element={
-            <Layout>
-              <HomePage />
-            </Layout>
-          } />
-          
-          {/* Rutas de Autenticación */}
-          <Route path="/auth/login" element={<LoginPage />} />
-          <Route path="/auth/register" element={<RegisterPage />} />
-          
-          {/* Rutas de Cliente */}
-          <Route path="/menu" element={
-            <Layout>
-              <MenuPage />
-            </Layout>
-          } />
-          <Route path="/cart" element={
-            <Layout>
-              <CartPage />
-            </Layout>
-          } />
-          <Route path="/orders" element={
-            <Layout>
-              <OrdersPage />
-            </Layout>
-          } />
-          <Route path="/profile" element={
-            <Layout>
-              <ProfilePage />
-            </Layout>
-          } />
-          
-          {/* Rutas de Administración */}
-          <Route path="/admin" element={
-            <Layout>
-              <AdminDashboard />
-            </Layout>
-          } />
-          <Route path="/admin/clients" element={
-            <Layout>
-              <ClientManagement />
-            </Layout>
-          } />
-          <Route path="/admin/inventory" element={
-            <Layout>
-              <InventoryPage />
-            </Layout>
-          } />
-          <Route path="/admin/delivery" element={
-            <Layout>
-              <DeliveryPage />
-            </Layout>
-          } />
-          <Route path="/admin/metrics" element={
-            <Layout>
-              <MetricsPage />
-            </Layout>
-          } />
-        </Routes>
-      </div>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <div className="App">
+          <Routes>
+            {/* Rutas Públicas */}
+            <Route path="/" element={
+              <Layout>
+                <HomePage />
+              </Layout>
+            } />
+            
+            {/* Rutas de Autenticación */}
+            <Route path="/auth/login" element={<LoginPage />} />
+            <Route path="/auth/register" element={<RegisterPage />} />
+            
+            {/* Dashboard - redirige al menú por defecto */}
+            <Route path="/dashboard" element={
+              <Layout>
+                <MenuPage />
+              </Layout>
+            } />
+            
+            {/* Rutas de Cliente */}
+            <Route path="/menu" element={
+              <Layout>
+                <MenuPage />
+              </Layout>
+            } />
+            <Route path="/cart" element={
+              <Layout>
+                <CartPage />
+              </Layout>
+            } />
+            <Route path="/orders" element={
+              <Layout>
+                <OrdersPage />
+              </Layout>
+            } />
+            <Route path="/profile" element={
+              <Layout>
+                <ProfilePage />
+              </Layout>
+            } />
+            
+            {/* Rutas de Administración */}
+            <Route path="/admin" element={
+              <Layout>
+                <AdminDashboard />
+              </Layout>
+            } />
+            <Route path="/admin/clients" element={
+              <Layout>
+                <ClientManagement />
+              </Layout>
+            } />
+            <Route path="/admin/inventory" element={
+              <Layout>
+                <InventoryPage />
+              </Layout>
+            } />
+            <Route path="/admin/delivery" element={
+              <Layout>
+                <DeliveryPage />
+              </Layout>
+            } />
+            <Route path="/admin/metrics" element={
+              <Layout>
+                <MetricsPage />
+              </Layout>
+            } />
+          </Routes>
+        </div>
+      </Router>
+    </AuthProvider>
   );
 }
 

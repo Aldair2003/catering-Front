@@ -135,7 +135,6 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="min-h-screen">
-      
       {/* Hero Section - Gradiente Naranja Hermoso */}
       <motion.section 
         className="relative py-20 px-4 text-center overflow-hidden"

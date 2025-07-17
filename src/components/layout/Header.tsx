@@ -1,83 +1,21 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import {
-  HomeIcon,
-  ChartBarIcon,
-  UsersIcon,
-  CubeIcon,
-  TruckIcon,
-  UserIcon,
-  Bars3Icon,
-  XMarkIcon
-} from '@heroicons/react/24/outline';
-import {
-  HomeIcon as HomeIconSolid,
-  ChartBarIcon as ChartBarIconSolid,
-  UsersIcon as UsersIconSolid,
-  CubeIcon as CubeIconSolid,
-  TruckIcon as TruckIconSolid,
-} from '@heroicons/react/24/solid';
 
 /**
  * Header principal de la aplicación
  * Navegación simplificada para mostrar servicios de catering (sin compras)
  * 
  * Funcionalidades:
- * - Logo y marca con colores naranja
- * - Navegación básica: Solo Inicio + Admin
- * - Diseño enfocado en exhibición de servicios
- * - Animaciones suaves con Framer Motion
+ * - Logo y marca de la empresa
+ * - Menú de navegación adaptativo según el rol
+ * - Indicador de página activa
+ * - Acceso rápido a carrito y perfil
  */
 const Header: React.FC = () => {
   const location = useLocation();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   
   // Determinar si estamos en rutas de admin
   const isAdminRoute = location.pathname.startsWith('/admin');
-  
-  // Helper para determinar si el link está activo
-  const isActivePath = (path: string) => location.pathname === path;
-  
-  // Configuración de navegación para clientes (simplificada)
-  const customerNavigation = [
-    { 
-      name: 'Inicio', 
-      path: '/', 
-      icon: HomeIcon, 
-      iconSolid: HomeIconSolid 
-    }
-  ];
-  
-  // Configuración de navegación para admin
-  const adminNavigation = [
-    { 
-      name: 'Dashboard', 
-      path: '/admin', 
-      icon: ChartBarIcon, 
-      iconSolid: ChartBarIconSolid 
-    },
-    { 
-      name: 'Clientes', 
-      path: '/admin/clients', 
-      icon: UsersIcon, 
-      iconSolid: UsersIconSolid 
-    },
-    { 
-      name: 'Inventario', 
-      path: '/admin/inventory', 
-      icon: CubeIcon, 
-      iconSolid: CubeIconSolid 
-    },
-    { 
-      name: 'Entregas', 
-      path: '/admin/delivery', 
-      icon: TruckIcon, 
-      iconSolid: TruckIconSolid 
-    },
-  ];
-  
-  const navigation = isAdminRoute ? adminNavigation : customerNavigation;
   
   return (
     <motion.header 
@@ -115,75 +53,98 @@ const Header: React.FC = () => {
             </Link>
           </motion.div>
 
-          {/* Navegación principal - Desktop */}
-          <nav className="hidden md:flex items-center space-x-1">
-            {navigation.map((item) => {
-              const isActive = isActivePath(item.path);
-              const Icon = isActive ? item.iconSolid : item.icon;
-              
-              return (
-                <motion.div
-                  key={item.path}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+          {/* Navegación principal */}
+          <nav className="hidden md:flex items-center space-x-6">
+            {!isAdminRoute ? (
+              /* Navegación para clientes */
+              <>
+                <Link 
+                  to="/" 
+                  className={`hover:text-blue-600 transition-colors ${
+                    location.pathname === '/' ? 'text-blue-600 font-semibold' : 'text-gray-700'
+                  }`}
                 >
-                  <Link 
-                    to={item.path} 
-                    className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-200 ${
-                      isActive 
-                        ? 'text-orange-700 bg-orange-50 font-semibold shadow-sm border border-orange-200' 
-                        : 'text-gray-700 hover:text-orange-600 hover:bg-orange-50'
-                    }`}
-                  >
-                    <Icon className="h-4 w-4" />
-                    <span>{item.name}</span>
-                  </Link>
-                </motion.div>
-              );
-            })}
+                  Inicio
+                </Link>
+                <Link 
+                  to="/menu" 
+                  className={`hover:text-blue-600 transition-colors ${
+                    location.pathname === '/menu' ? 'text-blue-600 font-semibold' : 'text-gray-700'
+                  }`}
+                >
+                  Menú
+                </Link>
+                <Link 
+                  to="/orders" 
+                  className={`hover:text-blue-600 transition-colors ${
+                    location.pathname === '/orders' ? 'text-blue-600 font-semibold' : 'text-gray-700'
+                  }`}
+                >
+                  Mis Pedidos
+                </Link>
+              </>
+            ) : (
+              /* Navegación para admin */
+              <>
+                <Link 
+                  to="/admin" 
+                  className={`hover:text-blue-600 transition-colors ${
+                    location.pathname === '/admin' ? 'text-blue-600 font-semibold' : 'text-gray-700'
+                  }`}
+                >
+                  Dashboard
+                </Link>
+                <Link 
+                  to="/admin/clients" 
+                  className={`hover:text-blue-600 transition-colors ${
+                    location.pathname === '/admin/clients' ? 'text-blue-600 font-semibold' : 'text-gray-700'
+                  }`}
+                >
+                  Clientes
+                </Link>
+                <Link 
+                  to="/admin/inventory" 
+                  className={`hover:text-blue-600 transition-colors ${
+                    location.pathname === '/admin/inventory' ? 'text-blue-600 font-semibold' : 'text-gray-700'
+                  }`}
+                >
+                  Inventario
+                </Link>
+                <Link 
+                  to="/admin/delivery" 
+                  className={`hover:text-blue-600 transition-colors ${
+                    location.pathname === '/admin/delivery' ? 'text-blue-600 font-semibold' : 'text-gray-700'
+                  }`}
+                >
+                  Entregas
+                </Link>
+              </>
+            )}
           </nav>
 
           {/* Acciones del usuario */}
-          <div className="flex items-center space-x-3">
-            
-            {/* Botones de autenticación */}
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
+          <div className="flex items-center space-x-4">
+            {!isAdminRoute && (
+              /* Carrito para clientes */
               <Link 
-                to="/auth/login" 
-                className="flex items-center space-x-2 text-orange-600 hover:text-orange-700 px-4 py-2 rounded-lg hover:bg-orange-50 transition-all duration-200 font-medium"
+                to="/cart" 
+                className="relative hover:text-blue-600 transition-colors"
               >
-                <UserIcon className="h-4 w-4" />
-                <span>Iniciar Sesión</span>
-              </Link>
-            </motion.div>
-
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Link 
-                to="/auth/register" 
-                className="flex items-center space-x-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 py-2 rounded-lg hover:from-orange-600 hover:to-orange-700 transition-all duration-200 shadow-lg font-medium"
-              >
-                <span>Registrarse</span>
+                <span className="text-xl">🛒</span>
+                {/* Badge de cantidad - se implementará con Context */}
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  3
+                </span>
               </Link>
             </motion.div>
             
-            {/* Mobile menu button */}
-            <motion.button
-              className="md:hidden p-2 text-gray-700 hover:text-orange-600 transition-colors rounded-lg hover:bg-orange-50"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              whileTap={{ scale: 0.9 }}
+            {/* Login/Profile */}
+            <Link 
+              to="/auth/login" 
+              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
             >
-              {isMobileMenuOpen ? (
-                <XMarkIcon className="h-6 w-6" />
-              ) : (
-                <Bars3Icon className="h-6 w-6" />
-              )}
-            </motion.button>
+              Iniciar Sesión
+            </Link>
           </div>
         </div>
         
