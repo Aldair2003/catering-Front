@@ -1,5 +1,6 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 
 /**
  * Header principal de la aplicación
@@ -10,12 +11,20 @@ import { Link, useLocation } from 'react-router-dom';
  * - Menú de navegación adaptativo según el rol
  * - Indicador de página activa
  * - Acceso rápido a carrito y perfil
+ * - Autenticación de usuario
  */
 const Header: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout, isAuthenticated } = useAuth();
   
   // Determinar si estamos en rutas de admin
   const isAdminRoute = location.pathname.startsWith('/admin');
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
   
   return (
     <header className="bg-white shadow-md border-b border-gray-200">
@@ -51,14 +60,16 @@ const Header: React.FC = () => {
                 >
                   Menú
                 </Link>
-                <Link 
-                  to="/orders" 
-                  className={`hover:text-blue-600 transition-colors ${
-                    location.pathname === '/orders' ? 'text-blue-600 font-semibold' : 'text-gray-700'
-                  }`}
-                >
-                  Mis Pedidos
-                </Link>
+                {isAuthenticated && (
+                  <Link 
+                    to="/orders" 
+                    className={`hover:text-blue-600 transition-colors ${
+                      location.pathname === '/orders' ? 'text-blue-600 font-semibold' : 'text-gray-700'
+                    }`}
+                  >
+                    Mis Pedidos
+                  </Link>
+                )}
               </>
             ) : (
               /* Navegación para admin */
@@ -101,8 +112,8 @@ const Header: React.FC = () => {
 
           {/* Acciones del usuario */}
           <div className="flex items-center space-x-4">
-            {!isAdminRoute && (
-              /* Carrito para clientes */
+            {!isAdminRoute && isAuthenticated && (
+              /* Carrito para clientes autenticados */
               <Link 
                 to="/cart" 
                 className="relative hover:text-blue-600 transition-colors"
@@ -110,18 +121,46 @@ const Header: React.FC = () => {
                 <span className="text-xl">🛒</span>
                 {/* Badge de cantidad - se implementará con Context */}
                 <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  3
+                  0
                 </span>
               </Link>
             )}
             
-            {/* Login/Profile */}
-            <Link 
-              to="/auth/login" 
-              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
-            >
-              Iniciar Sesión
-            </Link>
+            {/* Login/Profile/Logout */}
+            {isAuthenticated ? (
+              <div className="flex items-center space-x-4">
+                <span className="text-gray-700">
+                  Hola, {user?.nombre}
+                </span>
+                <Link 
+                  to="/profile" 
+                  className="text-blue-600 hover:text-blue-700 transition-colors"
+                >
+                  Perfil
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors"
+                >
+                  Cerrar Sesión
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-2">
+                <Link 
+                  to="/auth/login" 
+                  className="text-blue-600 hover:text-blue-700 transition-colors"
+                >
+                  Iniciar Sesión
+                </Link>
+                <Link 
+                  to="/auth/register" 
+                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+                >
+                  Registrarse
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>

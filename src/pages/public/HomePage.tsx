@@ -14,7 +14,6 @@ import { Link } from 'react-router-dom';
 const HomePage: React.FC = () => {
   return (
     <div className="space-y-16">
-      
       {/* Hero Section */}
       <section className="text-center py-16 bg-gradient-to-r from-blue-50 to-indigo-100 rounded-xl">
         <div className="max-w-4xl mx-auto px-4">
