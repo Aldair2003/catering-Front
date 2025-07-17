@@ -79,7 +79,7 @@ const Sidebar: React.FC = () => {
         whileHover={{ scale: 1.02 }}
         transition={{ duration: 0.2 }}
       >
-        <Link to="/" className="flex items-center space-x-3">
+        <div className="flex items-center space-x-3">
           <img 
             src="/logo/logoCatemini.png" 
             alt="PortoCatering Logo" 
@@ -88,7 +88,7 @@ const Sidebar: React.FC = () => {
           <span className="text-xl font-bold bg-gradient-to-r from-orange-600 to-orange-800 bg-clip-text text-transparent">
             PortoCatering
           </span>
-        </Link>
+        </div>
         {isAdminRoute && (
           <div className="mt-2">
             <span className="text-xs text-orange-600 font-semibold bg-orange-50 px-2 py-1 rounded-full">
