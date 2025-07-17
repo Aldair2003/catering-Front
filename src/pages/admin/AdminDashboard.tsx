@@ -1,4 +1,5 @@
 import React from 'react';
+import ChatSidebar from '../../components/chatbot/ChatSidebar';
 
 /**
  * Dashboard Principal de Administración
@@ -152,6 +153,8 @@ const AdminDashboard: React.FC = () => {
           </div>
         </div>
       </div>
+      {/* ChatBot sidebar solo en dashboard */}
+      <ChatSidebar />
     </div>
   );
 };
