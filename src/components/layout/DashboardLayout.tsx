@@ -10,7 +10,40 @@ import { motion, AnimatePresence } from 'framer-motion';
 const DashboardLayout: React.FC = () => {
   const location = useLocation();
   const { toggleSidebar, isMobile } = useSidebar();
-  const isAdminRoute = location.pathname.startsWith('/admin') || location.pathname === '/dashboard';
+
+  // Función para obtener el título basado en la ruta
+  const getPageTitle = (pathname: string): string => {
+    const routeTitles: Record<string, string> = {
+      // Rutas de cliente
+      '/dashboard': 'Dashboard',
+      '/menu': 'Nuestro Menú',
+      '/orders': 'Mis Pedidos',
+      '/cart': 'Carrito de Compras',
+      '/profile': 'Mi Perfil',
+      
+      // Rutas de admin
+      '/admin': 'Panel Administrativo',
+      '/admin/clients': 'Gestión de Clientes',
+      '/admin/inventory': 'Inventario',
+      '/admin/delivery': 'Entregas y Logística',
+      '/admin/metrics': 'Métricas y Reportes'
+    };
+
+    // Buscar coincidencia exacta primero
+    if (routeTitles[pathname]) {
+      return routeTitles[pathname];
+    }
+
+    // Si no hay coincidencia exacta, buscar por patrones
+    if (pathname.startsWith('/admin')) {
+      return 'Panel Administrativo';
+    }
+
+    // Retornar título por defecto
+    return 'PortoCatering';
+  };
+
+  const pageTitle = getPageTitle(location.pathname);
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
@@ -30,7 +63,7 @@ const DashboardLayout: React.FC = () => {
           
           <div className="flex items-center space-x-4">
             <h1 className="text-lg font-semibold text-gray-800">
-              {isAdminRoute ? 'Panel Administrativo' : 'Dashboard'}
+              {pageTitle}
             </h1>
           </div>
         </div>
