@@ -131,104 +131,118 @@ const Sidebar: React.FC = () => {
   };
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <>
-          {/* Overlay para móvil */}
-          {isMobile && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="fixed inset-0 bg-black bg-opacity-50 z-40"
-              onClick={closeSidebar}
-            />
-          )}
+    <>
+      {/* Overlay para móvil - solo cuando está abierto */}
+      <AnimatePresence>
+        {isMobile && isOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 bg-black bg-opacity-50 z-40"
+            onClick={closeSidebar}
+          />
+        )}
+      </AnimatePresence>
 
-          {/* Sidebar */}
-          <motion.aside
-            initial={{ x: -300 }}
-            animate={{ x: 0 }}
-            exit={{ x: -300 }}
-            transition={{ type: "spring", damping: 25, stiffness: 200, duration: 0.3 }}
-            className={`
-              ${isMobile 
-                ? 'fixed top-0 left-0 h-full w-64 bg-white shadow-xl z-50' 
-                : 'relative h-screen w-64 bg-white shadow-lg border-r border-gray-200'
-              }
-            `}
-          >
-            {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-100">
-              <div className="flex items-center space-x-3">
-                <img 
-                  src="/logo/logoCatemini.png" 
-                  alt="PortoCatering" 
-                  className="w-8 h-8"
-                />
-                <span className="text-xl font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
-                  PortoCatering
-                </span>
-              </div>
-              {isMobile && (
-                <button
-                  onClick={closeSidebar}
-                  className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-                >
-                  <XMarkIcon className="w-5 h-5 text-gray-500" />
-                </button>
-              )}
+      {/* Sidebar - siempre montado pero controlado por transform */}
+      <motion.aside
+        animate={{
+          x: isMobile ? (isOpen ? 0 : -300) : 0,
+          width: !isMobile ? (isOpen ? 256 : 0) : 256
+        }}
+        transition={{ 
+          type: "spring", 
+          damping: 30, 
+          stiffness: 300,
+          duration: 0.3 
+        }}
+        className={`
+          ${isMobile 
+            ? 'fixed top-0 left-0 h-full w-64 bg-white shadow-xl z-50' 
+            : 'relative h-screen bg-white shadow-lg border-r border-gray-200 overflow-hidden'
+          }
+        `}
+      >
+        {/* Contenido del sidebar con opacity controlada */}
+        <motion.div
+          animate={{ 
+            opacity: isOpen ? 1 : 0,
+            pointerEvents: isOpen ? 'auto' : 'none'
+          }}
+          transition={{ duration: 0.2 }}
+          className="h-full flex flex-col"
+        >
+          {/* Header */}
+          <div className="flex items-center justify-between p-6 border-b border-gray-100">
+            <div className="flex items-center space-x-3">
+              <img 
+                src="/logo/logoCatemini.png" 
+                alt="PortoCatering" 
+                className="w-8 h-8"
+              />
+              <span className="text-xl font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
+                PortoCatering
+              </span>
             </div>
-
-            {/* Navegación */}
-            <nav className="flex-1 p-4">
-              <ul className="space-y-2">
-                {navItems.map((item, index) => {
-                  const isActive = isActivePath(item.path);
-                  const Icon = isActive ? item.iconSolid : item.icon;
-                  
-                  return (
-                    <motion.li
-                      key={item.name}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.03, duration: 0.2 }}
-                    >
-                      <Link
-                        to={item.path}
-                        onClick={handleNavClick}
-                        className={`
-                          flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200
-                          ${isActive 
-                            ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg' 
-                            : 'text-gray-600 hover:bg-gray-50 hover:text-orange-500'
-                          }
-                        `}
-                      >
-                        <Icon className="w-5 h-5" />
-                        <span className="font-medium">{item.name}</span>
-                      </Link>
-                    </motion.li>
-                  );
-                })}
-              </ul>
-            </nav>
-
-            {/* Footer */}
-            <div className="p-4 border-t border-gray-100">
+            {isMobile && (
               <button
-                onClick={handleLogout}
-                className="flex items-center space-x-3 w-full px-4 py-3 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded-xl transition-all duration-200"
+                onClick={closeSidebar}
+                className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
               >
-                <ArrowLeftOnRectangleIcon className="w-5 h-5" />
-                <span className="font-medium">Cerrar Sesión</span>
+                <XMarkIcon className="w-5 h-5 text-gray-500" />
               </button>
-            </div>
-          </motion.aside>
-        </>
-      )}
-    </AnimatePresence>
+            )}
+          </div>
+
+          {/* Navegación */}
+          <nav className="flex-1 p-4">
+            <ul className="space-y-2">
+              {navItems.map((item, index) => {
+                const isActive = isActivePath(item.path);
+                const Icon = isActive ? item.iconSolid : item.icon;
+                
+                return (
+                  <motion.li
+                    key={item.name}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: isOpen ? index * 0.03 : 0, duration: 0.2 }}
+                  >
+                    <Link
+                      to={item.path}
+                      onClick={handleNavClick}
+                      className={`
+                        flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200
+                        ${isActive 
+                          ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg' 
+                          : 'text-gray-600 hover:bg-gray-50 hover:text-orange-500'
+                        }
+                      `}
+                    >
+                      <Icon className="w-5 h-5" />
+                      <span className="font-medium">{item.name}</span>
+                    </Link>
+                  </motion.li>
+                );
+              })}
+            </ul>
+          </nav>
+
+          {/* Footer */}
+          <div className="p-4 border-t border-gray-100">
+            <button
+              onClick={handleLogout}
+              className="flex items-center space-x-3 w-full px-4 py-3 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded-xl transition-all duration-200"
+            >
+              <ArrowLeftOnRectangleIcon className="w-5 h-5" />
+              <span className="font-medium">Cerrar Sesión</span>
+            </button>
+          </div>
+        </motion.div>
+      </motion.aside>
+    </>
   );
 };
 
