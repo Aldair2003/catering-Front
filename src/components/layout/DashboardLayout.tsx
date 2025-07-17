@@ -5,37 +5,38 @@ import Sidebar from './Sidebar';
 import ChatBot from '../chatbot/ChatBot';
 import { useSidebar } from '../../contexts/SidebarContext';
 import { Bars3Icon } from '@heroicons/react/24/outline';
+import { motion, AnimatePresence } from 'framer-motion';
 
-/**
- * Layout para páginas del dashboard
- * Incluye sidebar responsive, contenido principal y chatbot integrado
- * Sin header ni footer para maximizar espacio de trabajo
- * Usa Outlet para renderizar rutas anidadas
- */
 const DashboardLayout: React.FC = () => {
   const location = useLocation();
-  const { isOpen, toggleSidebar, closeSidebar, isMobile } = useSidebar();
+  const { isOpen, toggleSidebar, isMobile } = useSidebar();
   const isAdminRoute = location.pathname.startsWith('/admin') || location.pathname === '/dashboard';
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      {/* Overlay para móvil */}
-      {isMobile && isOpen && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
-          onClick={closeSidebar}
-        />
-      )}
-
       {/* Sidebar */}
       <Sidebar />
       
       {/* Contenido Principal */}
-      <main className={`flex-1 min-h-screen relative transition-all duration-300 ${
-        isOpen && !isMobile ? 'ml-64' : 'ml-0'
-      }`}>
+      <motion.div 
+        className="flex-1 flex flex-col min-h-screen"
+        animate={{ 
+          marginLeft: (isOpen && !isMobile) ? 0 : 0,
+          width: (isOpen && !isMobile) ? 'auto' : '100%'
+        }}
+        transition={{ 
+          type: "spring", 
+          damping: 25, 
+          stiffness: 200,
+          duration: 0.3
+        }}
+      >
         {/* Header del contenido con botón de menú */}
-        <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+        <motion.div 
+          className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between"
+          layout
+          transition={{ duration: 0.3 }}
+        >
           <button
             onClick={toggleSidebar}
             className="p-2 rounded-lg hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500"
@@ -48,20 +49,38 @@ const DashboardLayout: React.FC = () => {
               {isAdminRoute ? 'Panel Administrativo' : 'Dashboard'}
             </h1>
           </div>
-        </div>
+        </motion.div>
 
         {/* Área de contenido */}
-        <div className="p-6 pb-20">
-          <Outlet />
-        </div>
+        <motion.div 
+          className="flex-1 p-6 pb-20"
+          layout
+          transition={{ duration: 0.3 }}
+        >
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={location.pathname}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.2 }}
+            >
+              <Outlet />
+            </motion.div>
+          </AnimatePresence>
+        </motion.div>
         
         {/* ChatBot integrado */}
-        <div className={`fixed bottom-6 z-50 transition-all duration-300 ${
-          isOpen && !isMobile ? 'right-6' : 'right-6'
-        }`}>
+        <motion.div 
+          className="fixed bottom-6 right-6 z-50"
+          animate={{ 
+            right: (isOpen && !isMobile) ? 24 : 24 
+          }}
+          transition={{ duration: 0.3 }}
+        >
           <ChatBot />
-        </div>
-      </main>
+        </motion.div>
+      </motion.div>
     </div>
   );
 };

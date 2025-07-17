@@ -39,6 +39,11 @@ export const SidebarProvider: React.FC<SidebarProviderProps> = ({ children }) =>
         setIsOpen(initialState);
         setIsInitialized(true);
       }
+      
+      // Si cambiamos a móvil, cerrar sidebar
+      if (mobile && isOpen) {
+        setIsOpen(false);
+      }
     };
 
     checkMobile();
